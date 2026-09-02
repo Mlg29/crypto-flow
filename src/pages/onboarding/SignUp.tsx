@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Waves } from "lucide-react";
+import { KeyRound, ShieldCheck, Waves, Wallet } from "lucide-react";
+
+const INDUSTRIES = ["E-commerce", "Marketplaces", "SaaS & web services", "Payroll teams", "Gaming", "Trading platforms"];
+
+const SECURITY_FEATURES = [
+  { icon: KeyRound, title: "Two-factor authentication", body: "An extra layer of protection against unauthorized account access." },
+  { icon: ShieldCheck, title: "Role-based access", body: "Assign teammates the exact level of access their job needs." },
+  { icon: Wallet, title: "Withdrawal whitelisting", body: "Send payouts only to pre-approved, trusted addresses." },
+];
 
 export function SignUp() {
   const navigate = useNavigate();
@@ -35,6 +43,28 @@ export function SignUp() {
               Custodial wallets, invoicing, and bulk payouts — built for teams
               that move money across chains every day.
             </p>
+
+            <div className="mt-6 flex flex-wrap gap-2">
+              {INDUSTRIES.map((ind) => (
+                <span key={ind} className="rounded-full bg-white/8 px-3 py-1.5 text-xs font-semibold text-white/75">
+                  {ind}
+                </span>
+              ))}
+            </div>
+
+            <div className="mt-8 space-y-4 border-t border-white/10 pt-6">
+              {SECURITY_FEATURES.map((f) => (
+                <div key={f.title} className="flex gap-3">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white/8 text-cobalt-400">
+                    <f.icon size={16} />
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold text-white">{f.title}</p>
+                    <p className="mt-0.5 text-xs leading-relaxed text-white/55">{f.body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
           <p className="text-xs text-white/40">Trusted by 1,200+ merchants across 40 countries</p>
         </div>

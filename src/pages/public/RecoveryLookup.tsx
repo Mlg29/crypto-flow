@@ -25,7 +25,7 @@ export function RecoveryLookup() {
 
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-5 py-16 sm:px-8">
-      <div className="mb-6 grid h-12 w-12 place-items-center rounded-xl bg-cobalt-500/10 text-cobalt-600">
+      <div className="mb-6 grid h-12 w-12 place-items-center rounded-xl bg-orchid-500/10 text-orchid-600">
         <KeyRound size={22} />
       </div>
       <h1 className="font-display text-2xl font-bold text-ink-900">Track your order</h1>
@@ -41,7 +41,7 @@ export function RecoveryLookup() {
             setStatus("idle");
           }}
           placeholder="XXXX-XXXX-XXXX"
-          className="w-full rounded-lg border border-ink-900/12 px-3.5 py-3 text-center font-mono text-lg font-semibold tracking-wider outline-none focus:border-cobalt-400"
+          className="w-full rounded-lg border border-ink-900/12 px-3.5 py-3 text-center font-mono text-lg font-semibold tracking-wider outline-none focus:border-orchid-400"
         />
         {status === "not_found" && (
           <p className="mt-2 text-center text-sm font-semibold text-danger">
@@ -51,7 +51,7 @@ export function RecoveryLookup() {
         <button
           onClick={lookup}
           disabled={code.length < 14 || status === "loading"}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-cobalt-500 py-3 text-sm font-bold text-white hover:bg-cobalt-600 disabled:opacity-40"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-orchid-500 py-3 text-sm font-bold text-white hover:bg-orchid-600 disabled:opacity-40"
         >
           <Search size={15} />
           {status === "loading" ? "Looking up…" : "Look up order"}

@@ -1,6 +1,15 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { AlertTriangle, ArrowLeft, Check, Copy, Download, ShieldAlert } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  Check,
+  ChevronDown,
+  Copy,
+  Download,
+  ShieldAlert,
+  Tag,
+} from "lucide-react";
 import { ChainBadge } from "../../components/ChainBadge";
 import { Countdown } from "../../components/Countdown";
 import { CHAINS, fmtAmount, randomAddress, randomClaimCode } from "../../lib/data";
@@ -8,6 +17,25 @@ import type { ChainId, OrderType } from "../../lib/types";
 import { useApp } from "../../lib/AppContext";
 
 const STEP_LABELS = ["Pair & amount", "Destination", "Refund", "Review", "Save your code"];
+
+const TIPS = [
+  {
+    q: "What if I send from the wrong network?",
+    a: "If the asset is supported on our service, we'll still process your order — just expect a short delay while it's routed correctly.",
+  },
+  {
+    q: "What if I send the wrong amount?",
+    a: "Underpayments give you the option to top up or get a partial refund. Overpayments are refunded automatically to your refund address.",
+  },
+  {
+    q: "What if my rate expires before I send?",
+    a: "With a fixed rate, we re-quote at the current market rate. You can accept the new rate or cancel for a full refund.",
+  },
+  {
+    q: "How do I cancel an order?",
+    a: "If you haven't sent funds yet, just leave the page — there's nothing to cancel. If you've already sent funds, contact support right away.",
+  },
+];
 
 export function OrderWizard() {
   const [params] = useSearchParams();
@@ -18,6 +46,7 @@ export function OrderWizard() {
   const fromChain = (params.get("from") as ChainId) || "btc";
   const toChain = (params.get("to") as ChainId) || "eth";
   const fromAmount = params.get("amount") || "0.1";
+  const fixedRate = params.get("fixed") !== "false";
 
   const steps = type === "buy" ? [0, 1, 3, 4] : [0, 1, 2, 3, 4];
   const [stepPos, setStepPos] = useState(0);
@@ -25,8 +54,12 @@ export function OrderWizard() {
 
   const [destination, setDestination] = useState("");
   const [refund, setRefund] = useState("");
+  const [promo, setPromo] = useState("");
+  const [showPromo, setShowPromo] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [rateExpired, setRateExpired] = useState(false);
+  const [openTip, setOpenTip] = useState<number | null>(null);
 
   const claimCode = useMemo(() => randomClaimCode(), []);
   const depositAddress = useMemo(() => randomAddress(fromChain), [fromChain]);
@@ -58,7 +91,7 @@ export function OrderWizard() {
         {steps.map((s, i) => (
           <div
             key={s}
-            className={`h-1.5 flex-1 rounded-full ${i <= stepPos ? "bg-cobalt-500" : "bg-ink-900/8"}`}
+            className={`h-1.5 flex-1 rounded-full ${i <= stepPos ? "bg-orchid-500" : "bg-ink-900/8"}`}
           />
         ))}
       </div>
@@ -85,9 +118,11 @@ export function OrderWizard() {
               </span>
             </div>
             <p className="text-xs text-ink-500">
-              Rate includes our spread and network fee. It locks once you confirm on the review step.
+              {fixedRate
+                ? "Fixed rate: this is the exact amount you'll receive once you confirm, no matter how the market moves."
+                : "Floating rate: your final amount may shift slightly with the market until your deposit is detected."}
             </p>
-            <button onClick={next} className="w-full rounded-xl bg-cobalt-500 py-3 text-sm font-bold text-white hover:bg-cobalt-600">
+            <button onClick={next} className="w-full rounded-xl bg-orchid-500 py-3 text-sm font-bold text-white hover:bg-orchid-600">
               Continue
             </button>
           </div>
@@ -106,7 +141,7 @@ export function OrderWizard() {
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
               placeholder={`Paste your ${CHAINS[toChain].symbol} address`}
-              className="w-full rounded-lg border border-ink-900/12 px-3.5 py-2.5 font-mono text-sm outline-none focus:border-cobalt-400"
+              className="w-full rounded-lg border border-ink-900/12 px-3.5 py-2.5 font-mono text-sm outline-none focus:border-orchid-400"
             />
             <div className="flex items-start gap-2 rounded-lg border border-warning/25 bg-warning-light px-3.5 py-2.5 text-xs text-warning">
               <AlertTriangle size={15} className="mt-0.5 shrink-0" />
@@ -115,7 +150,7 @@ export function OrderWizard() {
             <button
               onClick={next}
               disabled={destination.trim().length < 6}
-              className="w-full rounded-xl bg-cobalt-500 py-3 text-sm font-bold text-white hover:bg-cobalt-600 disabled:opacity-40"
+              className="w-full rounded-xl bg-orchid-500 py-3 text-sm font-bold text-white hover:bg-orchid-600 disabled:opacity-40"
             >
               Continue
             </button>
@@ -131,7 +166,7 @@ export function OrderWizard() {
               value={refund}
               onChange={(e) => setRefund(e.target.value)}
               placeholder={`Paste a ${CHAINS[fromChain].symbol} address`}
-              className="w-full rounded-lg border border-ink-900/12 px-3.5 py-2.5 font-mono text-sm outline-none focus:border-cobalt-400"
+              className="w-full rounded-lg border border-ink-900/12 px-3.5 py-2.5 font-mono text-sm outline-none focus:border-orchid-400"
             />
             <p className="text-xs text-ink-500">
               If your order can't be completed, funds are returned here. Since there's no account,
@@ -140,7 +175,7 @@ export function OrderWizard() {
             <button
               onClick={next}
               disabled={refund.trim().length < 6}
-              className="w-full rounded-xl bg-cobalt-500 py-3 text-sm font-bold text-white hover:bg-cobalt-600 disabled:opacity-40"
+              className="w-full rounded-xl bg-orchid-500 py-3 text-sm font-bold text-white hover:bg-orchid-600 disabled:opacity-40"
             >
               Continue
             </button>
@@ -155,18 +190,73 @@ export function OrderWizard() {
                 <p className="mt-1 text-ink-700">We've re-quoted at the current market rate below.</p>
               </div>
             ) : (
-              <Countdown seconds={60} urgent label="Rate lock" onExpire={() => setRateExpired(true)} />
+              <Countdown seconds={60} urgent label={fixedRate ? "Rate lock" : "Rate updates in"} onExpire={() => setRateExpired(true)} />
             )}
             <dl className="space-y-2.5 text-sm">
               <Row label="Sending" value={`${fmtAmount(parseFloat(fromAmount))} ${fromChain.toUpperCase()}`} />
-              <Row label="Receiving (locked)" value={`${fmtAmount(parseFloat(fromAmount) * 12.4)} ${toChain.toUpperCase()}`} />
+              <Row label={fixedRate ? "Receiving (locked)" : "Receiving (est.)"} value={`${fmtAmount(parseFloat(fromAmount) * 12.4)} ${toChain.toUpperCase()}`} />
               <Row label="Destination" value={destination || "—"} mono />
               {type !== "buy" && <Row label="Refund address" value={refund || "—"} mono />}
               <Row label="Network fee" value="~0.15%" />
             </dl>
-            <button onClick={next} className="w-full rounded-xl bg-cobalt-500 py-3 text-sm font-bold text-white hover:bg-cobalt-600">
+
+            {!showPromo ? (
+              <button
+                onClick={() => setShowPromo(true)}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-orchid-600"
+              >
+                <Tag size={13} /> I have a promo code
+              </button>
+            ) : (
+              <input
+                value={promo}
+                onChange={(e) => setPromo(e.target.value)}
+                placeholder="Enter promo code"
+                className="w-full rounded-lg border border-ink-900/12 px-3.5 py-2.5 text-sm outline-none focus:border-orchid-400"
+              />
+            )}
+
+            <label className="flex items-start gap-2.5 text-xs text-ink-600">
+              <input
+                type="checkbox"
+                checked={agreedToTerms}
+                onChange={(e) => setAgreedToTerms(e.target.checked)}
+                className="mt-0.5 h-4 w-4 rounded border-ink-900/25 text-orchid-500 focus:ring-orchid-400"
+              />
+              I've read and agree to the Terms of Use, Privacy Policy, and Risk Disclosure Statement
+            </label>
+
+            <button
+              onClick={next}
+              disabled={!agreedToTerms}
+              className="w-full rounded-xl bg-orchid-500 py-3 text-sm font-bold text-white hover:bg-orchid-600 disabled:opacity-40"
+            >
               Confirm and lock rate
             </button>
+
+            <div className="border-t border-ink-900/6 pt-3">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-500">
+                Useful things to know
+              </p>
+              <div className="space-y-1.5">
+                {TIPS.map((tip, i) => (
+                  <div key={tip.q} className="rounded-lg border border-ink-900/8">
+                    <button
+                      onClick={() => setOpenTip(openTip === i ? null : i)}
+                      className="flex w-full items-center justify-between px-3.5 py-2.5 text-left text-xs font-semibold text-ink-700"
+                    >
+                      {tip.q}
+                      <ChevronDown size={14} className={`shrink-0 transition ${openTip === i ? "rotate-180" : ""}`} />
+                    </button>
+                    {openTip === i && (
+                      <p className="border-t border-ink-900/6 px-3.5 py-2.5 text-xs leading-relaxed text-ink-500">
+                        {tip.a}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
@@ -201,14 +291,14 @@ export function OrderWizard() {
                 type="checkbox"
                 checked={confirmed}
                 onChange={(e) => setConfirmed(e.target.checked)}
-                className="mt-0.5 h-4 w-4 rounded border-ink-900/25 text-cobalt-500 focus:ring-cobalt-400"
+                className="mt-0.5 h-4 w-4 rounded border-ink-900/25 text-orchid-500 focus:ring-orchid-400"
               />
               I have saved my recovery code
             </label>
             <button
               onClick={finish}
               disabled={!confirmed}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-cobalt-500 py-3 text-sm font-bold text-white hover:bg-cobalt-600 disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-orchid-500 py-3 text-sm font-bold text-white hover:bg-orchid-600 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <Check size={16} /> Continue to deposit
             </button>

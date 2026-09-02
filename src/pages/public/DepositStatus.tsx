@@ -84,8 +84,8 @@ export function DepositStatus() {
       )}
 
       {exception === "overpaid" && (
-        <div className="mb-6 rounded-xl border border-cobalt-500/25 bg-cobalt-500/5 p-4 text-sm">
-          <p className="font-semibold text-cobalt-700">We received more than expected.</p>
+        <div className="mb-6 rounded-xl border border-orchid-500/25 bg-orchid-500/5 p-4 text-sm">
+          <p className="font-semibold text-orchid-700">We received more than expected.</p>
           <p className="mt-1 text-ink-700">
             The extra {fmtAmount(amount * 0.3)} {fromChain.toUpperCase()} will be automatically refunded to your refund address. No action needed.
           </p>

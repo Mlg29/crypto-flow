@@ -14,8 +14,21 @@ Then open the printed local URL. `npm run build` produces a production bundle in
 
 ## Design system
 
-- **Palette:** deep navy "ink" chrome, cobalt blue primary, teal reserved exclusively
-  for sandbox mode (persistent, non-dismissable banner), green/amber/red for
+- **Two accent systems, one shared chrome** — following the PRD's "two distinct
+  emotional contexts" principle, grounded in the two reference sites it names:
+  - **Anonymous exchange** (landing, order wizard, deposit/status, recovery
+    lookup) uses a **violet accent** (`orchid`), a dark hero, tabbed Swap/Buy-Sell
+    widget, a fixed-rate toggle with tooltip, a live rate-refresh countdown, and
+    a "Useful things to know" trust accordion — patterned after **changenow.io**.
+  - **Merchant dashboard and onboarding** uses a **cobalt-blue accent**, a
+    Stripe-like data-dense layout, and a sign-up page with a bold headline,
+    industry-served pills, and security feature cards — patterned after
+    **nowpayments.io**.
+  - Both share the same ink/paper neutrals, type system, and component
+    primitives (ChainBadge, StatusStepper, ConfirmModal, etc.) — same tokens,
+    different tone, as the PRD specifies.
+- **Palette:** deep navy "ink" chrome, teal reserved exclusively for sandbox
+  mode (persistent, non-dismissable banner), green/amber/red for
   success/warning/danger, per-chain accent colors for badges.
 - **Type:** Sora for display/headings, Manrope for UI text, IBM Plex Mono for every
   balance, address, transaction ID, and recovery code (tabular numerals).

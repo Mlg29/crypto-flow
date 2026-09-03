@@ -18,8 +18,8 @@ export default {
           500: "#33477A",
         },
         paper: {
-          DEFAULT: "#F6F7FB",
-          dim: "#EEF0F7",
+          DEFAULT: "#E9EAF6",
+          dim: "#DEE1F1",
           card: "#FFFFFF",
         },
         cobalt: {

@@ -183,3 +183,30 @@ export const WEBHOOKS = [
   { id: "wh_1", url: "https://api.northwind.io/hooks/cryptoflow", env: "live" as const, events: 6, status: "enabled" as const, lastDelivery: "4m ago" },
   { id: "wh_2", url: "https://staging.northwind.io/hooks/cf", env: "sandbox" as const, events: 3, status: "enabled" as const, lastDelivery: "1h ago" },
 ];
+
+export const RECENT_ORDERS: { from: ChainId; to: ChainId; amount: string; time: string }[] = [
+  { from: "btc", to: "eth", amount: "0.42 BTC", time: "12s ago" },
+  { from: "eth", to: "trx", amount: "3.1 ETH", time: "38s ago" },
+  { from: "trx", to: "bsc", amount: "1,200 USDT", time: "51s ago" },
+  { from: "bsc", to: "btc", amount: "640 USDT", time: "1m ago" },
+  { from: "eth", to: "btc", amount: "8.4 ETH", time: "2m ago" },
+  { from: "btc", to: "bsc", amount: "0.09 BTC", time: "2m ago" },
+];
+
+export const REVIEWS = [
+  {
+    name: "Kwame O.",
+    text: "Sent BTC in the evening, ETH was in my wallet before I'd finished my coffee. No account, no waiting on support.",
+    rating: 5,
+  },
+  {
+    name: "Priya M.",
+    text: "Rate stayed exactly what was quoted even though the market moved while my deposit was confirming. That's the whole reason I keep coming back.",
+    rating: 5,
+  },
+  {
+    name: "Daniel R.",
+    text: "Underpaid by accident and support walked me through topping up in minutes. Didn't expect that level of care from a no-login exchange.",
+    rating: 4,
+  },
+];

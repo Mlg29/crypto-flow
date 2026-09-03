@@ -206,7 +206,7 @@ function BulkPayout() {
           <p className="text-sm font-semibold text-ink-800">Drag a CSV here or click to browse</p>
           <p className="mt-1 text-xs text-ink-500">Accepts .csv up to 10MB</p>
           <button onClick={() => setPhase("review")} className="mt-4 rounded-lg bg-cobalt-500 px-4 py-2 text-sm font-bold text-white hover:bg-cobalt-600">
-            Use sample file
+            Click to upload
           </button>
         </div>
         <a href="#" className="mt-3 inline-block text-xs font-semibold text-cobalt-600">

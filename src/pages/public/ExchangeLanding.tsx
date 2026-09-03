@@ -9,9 +9,10 @@ import {
   Star,
   Timer,
 } from "lucide-react";
-import { CHAIN_LIST, RATES, fmtAmount } from "../../lib/data";
+import { CHAIN_LIST, CHAINS, RATES, RECENT_ORDERS, REVIEWS, fmtAmount } from "../../lib/data";
 import type { ChainId, OrderType } from "../../lib/types";
 import { Countdown } from "../../components/Countdown";
+import { ChainBadge } from "../../components/ChainBadge";
 
 const TABS: { id: OrderType; label: string }[] = [
   { id: "swap", label: "Swap" },
@@ -198,12 +199,50 @@ export function ExchangeLanding() {
         </div>
       </div>
 
-      <div className="relative border-y border-white/10 bg-ink-950 px-5 py-10 sm:px-8">
+      <div className="relative border-y border-white/10 bg-ink-950 px-5 py-3 sm:px-8">
+        <div className="mx-auto flex max-w-6xl items-center gap-3 overflow-hidden">
+          <span className="flex shrink-0 items-center gap-1.5 text-xs font-bold text-orchid-300">
+            <span className="h-1.5 w-1.5 animate-pulseSoft rounded-full bg-orchid-400" /> LIVE
+          </span>
+          <div className="flex flex-1 gap-6 overflow-x-auto text-xs text-white/50 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {RECENT_ORDERS.map((o, i) => (
+              <span key={i} className="flex shrink-0 items-center gap-1.5 whitespace-nowrap">
+                <ChainBadge chain={o.from} variant="icon" />
+                <span className="font-mono text-white/70">{o.amount}</span>
+                <span>→</span>
+                <ChainBadge chain={o.to} variant="icon" />
+                <span className="text-white/30">· {o.time}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="relative border-b border-white/10 bg-ink-950 px-5 py-10 sm:px-8">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 sm:grid-cols-4">
           <BigStat value="10M+" label="orders processed" />
           <BigStat value="$10B+" label="volume moved" />
           <BigStat value="4" label="chains, more soon" />
           <BigStat value="24/7" label="human support" />
+        </div>
+      </div>
+
+      <div className="relative border-b border-white/10 bg-ink-950 px-5 py-10 sm:px-8">
+        <div className="mx-auto max-w-6xl">
+          <p className="mb-5 text-xs font-semibold uppercase tracking-wide text-white/40">Supported right now</p>
+          <div className="flex flex-wrap gap-3">
+            {CHAIN_LIST.map((c) => (
+              <span key={c.id} className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-2 text-sm font-semibold text-white/80">
+                <span className="grid h-5 w-5 place-items-center rounded-full text-[9px] font-bold text-white" style={{ backgroundColor: c.color }}>
+                  {c.symbol[0]}
+                </span>
+                {CHAINS[c.id].name}
+              </span>
+            ))}
+            <span className="flex items-center rounded-full border border-dashed border-white/15 px-3.5 py-2 text-sm font-medium text-white/40">
+              + more coming soon
+            </span>
+          </div>
         </div>
       </div>
 
@@ -220,6 +259,25 @@ export function ExchangeLanding() {
                 <span className="font-mono text-xs text-orchid-300">0{i + 1}</span>
                 <h3 className="mt-2 font-display text-base font-semibold text-white">{s.title}</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-white/60">{s.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="relative border-t border-white/10 bg-ink-950 px-5 py-14 sm:px-8">
+        <div className="mx-auto max-w-6xl">
+          <p className="text-xs font-semibold uppercase tracking-wide text-white/40">People are talking</p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+            {REVIEWS.map((r) => (
+              <div key={r.name} className="rounded-xl2 border border-white/10 bg-white/[0.03] p-5">
+                <div className="flex gap-0.5 text-orchid-300">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} size={13} fill={i < r.rating ? "currentColor" : "none"} strokeWidth={1.5} />
+                  ))}
+                </div>
+                <p className="mt-3 text-sm leading-relaxed text-white/70">"{r.text}"</p>
+                <p className="mt-3 text-xs font-semibold text-white/40">{r.name}</p>
               </div>
             ))}
           </div>

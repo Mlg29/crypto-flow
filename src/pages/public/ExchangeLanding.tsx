@@ -335,8 +335,23 @@ export function ExchangeLanding() {
       {/* ── Anonymous Exchange features ── */}
       <div className="relative border-b border-white/10 bg-ink-950 px-5 py-16 sm:px-8">
         <div className="mx-auto max-w-6xl">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/40">Anonymous Exchange</p>
-          <p className="mb-10 font-display text-2xl font-bold text-white">Your control. Your keys. Your funds.</p>
+          <div className="mb-12 grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+            <div>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/40">Anonymous Exchange</p>
+              <p className="mb-5 font-display text-2xl font-bold text-white">Your control. Your keys. Your funds.</p>
+              <p className="text-sm leading-relaxed text-white/55">
+                Built from the ground up for privacy. No accounts, no tracking, no custody — just your wallet, your rate, and your destination address.
+              </p>
+            </div>
+            <div className="relative overflow-hidden rounded-2xl border border-white/10">
+              <img
+                src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&h=460&fit=crop&q=80&auto=format"
+                alt="Secure blockchain network visualization"
+                className="w-full object-cover"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-ink-950/50 via-transparent to-transparent" />
+            </div>
+          </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {EXCHANGE_FEATURES.map((f) => (
               <div key={f.title} className="rounded-2xl border border-white/8 bg-white/[0.03] p-6">
@@ -366,18 +381,30 @@ export function ExchangeLanding() {
       {/* ── How it works ── */}
       <div className="relative border-b border-white/10 bg-ink-950 px-5 py-16 sm:px-8">
         <div className="mx-auto max-w-6xl">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/40">How it works</p>
-          <p className="mb-12 font-display text-2xl font-bold text-white">Four steps. No account.</p>
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {HOW_IT_WORKS.map((s) => (
-              <div key={s.step}>
-                <span className="mb-5 flex h-9 w-9 items-center justify-center rounded-full bg-orchid-500/12 font-mono text-sm font-bold text-orchid-300">
-                  {s.step}
-                </span>
-                <h3 className="font-display text-base font-bold text-white">{s.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/55">{s.body}</p>
+          <div className="grid items-center gap-12 lg:grid-cols-[1fr_380px] lg:gap-16">
+            <div>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/40">How it works</p>
+              <p className="mb-10 font-display text-2xl font-bold text-white">Four steps. No account.</p>
+              <div className="grid gap-8 sm:grid-cols-2">
+                {HOW_IT_WORKS.map((s) => (
+                  <div key={s.step}>
+                    <span className="mb-5 flex h-9 w-9 items-center justify-center rounded-full bg-orchid-500/12 font-mono text-sm font-bold text-orchid-300">
+                      {s.step}
+                    </span>
+                    <h3 className="font-display text-base font-bold text-white">{s.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-white/55">{s.body}</p>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+            <div className="relative hidden overflow-hidden rounded-2xl border border-white/10 lg:block">
+              <img
+                src="https://images.unsplash.com/photo-1601597111158-2fceff292cdc?w=700&h=720&fit=crop&q=80&auto=format"
+                alt="Crypto exchange on mobile"
+                className="w-full object-cover"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-950/50 to-transparent" />
+            </div>
           </div>
         </div>
       </div>
@@ -432,19 +459,29 @@ export function ExchangeLanding() {
       {/* ── Merchant Platform features ── */}
       <div className="relative border-b border-white/10 bg-ink-950 px-5 py-16 sm:px-8">
         <div className="mx-auto max-w-6xl">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/40">Merchant Platform</p>
-          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-            <p className="font-display text-2xl font-bold text-white">
-              Everything your business needs
-              <br />
-              to accept and send crypto.
-            </p>
-            <p className="max-w-sm text-sm leading-relaxed text-white/50">
-              Built for teams that move value across chains every day — from a single payout to hundreds at once.
-            </p>
+          <div className="mb-12 grid items-center gap-10 lg:grid-cols-[480px_1fr] lg:gap-16">
+            <div>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/40">Merchant Platform</p>
+              <p className="mb-5 font-display text-2xl font-bold text-white">
+                Everything your business needs
+                <br />
+                to accept and send crypto.
+              </p>
+              <p className="text-sm leading-relaxed text-white/50">
+                Built for teams that move value across chains every day — from a single payout to hundreds at once.
+              </p>
+            </div>
+            <div className="relative overflow-hidden rounded-2xl border border-white/10">
+              <img
+                src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=900&h=520&fit=crop&q=80&auto=format"
+                alt="Merchant analytics dashboard"
+                className="w-full object-cover opacity-85"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-l from-transparent to-ink-950/30" />
+            </div>
           </div>
 
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {MERCHANT_FEATURES.map((f) => (
               <div key={f.title} className="rounded-2xl border border-white/8 bg-white/[0.03] p-6">
                 <span className="mb-4 grid h-10 w-10 place-items-center rounded-xl bg-cobalt-500/10 text-cobalt-400">

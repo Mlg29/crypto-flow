@@ -119,8 +119,8 @@ export function OrderWizard() {
             </div>
             <p className="text-xs text-ink-500">
               {fixedRate
-                ? "Fixed rate: this is the exact amount you'll receive once you confirm, no matter how the market moves."
-                : "Floating rate: your final amount may shift slightly with the market until your deposit is detected."}
+                ? "Fixed rate: you receive the quoted amount as long as your deposit arrives within the rate lock window."
+                : "Floating rate: your final amount adjusts with the market rate at the time your deposit is detected."}
             </p>
             <button onClick={next} className="w-full rounded-xl bg-orchid-500 py-3 text-sm font-bold text-white hover:bg-orchid-600">
               Continue
@@ -194,7 +194,7 @@ export function OrderWizard() {
             )}
             <dl className="space-y-2.5 text-sm">
               <Row label="Sending" value={`${fmtAmount(parseFloat(fromAmount))} ${fromChain.toUpperCase()}`} />
-              <Row label={fixedRate ? "Receiving (locked)" : "Receiving (est.)"} value={`${fmtAmount(parseFloat(fromAmount) * 12.4)} ${toChain.toUpperCase()}`} />
+              <Row label={fixedRate ? "Receiving (rate locked)" : "Receiving (estimated)"} value={`${fmtAmount(parseFloat(fromAmount) * 12.4)} ${toChain.toUpperCase()}`} />
               <Row label="Destination" value={destination || "—"} mono />
               {type !== "buy" && <Row label="Refund address" value={refund || "—"} mono />}
               <Row label="Network fee" value="~0.15%" />

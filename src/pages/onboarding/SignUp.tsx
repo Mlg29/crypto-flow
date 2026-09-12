@@ -7,7 +7,7 @@ const INDUSTRIES = ["E-commerce", "Marketplaces", "SaaS & web services", "Payrol
 const SECURITY_FEATURES = [
   { icon: KeyRound, title: "Two-factor authentication", body: "An extra layer of protection against unauthorized account access." },
   { icon: ShieldCheck, title: "Role-based access", body: "Assign teammates the exact level of access their job needs." },
-  { icon: Wallet, title: "Withdrawal whitelisting", body: "Send payouts only to pre-approved, trusted addresses." },
+  { icon: Wallet, title: "Payout whitelisting", body: "Send payouts only to pre-approved, trusted addresses." },
 ];
 
 export function SignUp() {
@@ -33,15 +33,18 @@ export function SignUp() {
             <span className="grid h-8 w-8 place-items-center rounded-lg bg-white/10 text-sandbox">
               <Waves size={17} />
             </span>
-            <span className="font-display text-lg font-bold">CryptoFlow</span>
+            <div>
+              <span className="block font-display text-lg font-bold leading-tight">CryptoFlow</span>
+              <span className="block text-[10px] font-semibold uppercase tracking-widest text-white/40">Merchant Platform</span>
+            </div>
           </Link>
           <div>
             <p className="font-display text-3xl font-bold leading-tight">
-              Accept crypto payments. Pay out to anyone, anywhere.
+              Accept crypto payments. Send payouts across chains, built for your team.
             </p>
             <p className="mt-4 max-w-sm text-sm text-white/60">
-              Custodial wallets, invoicing, and bulk payouts — built for teams
-              that move money across chains every day.
+              Custodial wallets, invoicing, and bulk payouts — purpose-built for
+              teams that move value across chains at scale.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-2">
@@ -66,14 +69,14 @@ export function SignUp() {
               ))}
             </div>
           </div>
-          <p className="text-xs text-white/40">Trusted by 1,200+ merchants across 40 countries</p>
+          <p className="text-xs text-white/40">Used by 1,200+ businesses across 40 countries</p>
         </div>
       </div>
 
       <div className="flex items-center justify-center px-6 py-14">
         <div className="w-full max-w-sm">
-          <h1 className="font-display text-2xl font-bold text-ink-900">Create your merchant account</h1>
-          <p className="mt-1.5 text-sm text-ink-500">Verification takes about 15 minutes.</p>
+          <h1 className="font-display text-2xl font-bold text-ink-900">Create your Merchant Platform account</h1>
+          <p className="mt-1.5 text-sm text-ink-500">Business verification typically takes about 15 minutes.</p>
 
           <form
             onSubmit={(e) => {

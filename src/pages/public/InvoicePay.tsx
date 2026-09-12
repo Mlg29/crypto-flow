@@ -51,7 +51,7 @@ export function InvoicePay() {
         )}
 
         <p className="mt-6 text-center text-xs text-ink-400">
-          Payments are processed securely by CryptoFlow · Need help? Use the chat in the corner.
+          This payment is processed by CryptoFlow · Questions? Use the chat icon in the corner.
         </p>
       </div>
     </div>

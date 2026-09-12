@@ -15,13 +15,13 @@ export function PublicLayout() {
         </Link>
         <div className="flex items-center gap-4">
           <Link to="/order/lookup" className="hidden text-sm font-semibold text-ink-600 hover:text-ink-900 sm:block">
-            Track an order
+            Track order
           </Link>
           <Link
             to="/onboarding/signup"
             className="rounded-lg bg-ink-900 px-4 py-2 text-sm font-semibold text-white hover:bg-ink-800"
           >
-            For merchants
+            Merchant Platform
           </Link>
         </div>
       </header>

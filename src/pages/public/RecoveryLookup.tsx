@@ -30,7 +30,7 @@ export function RecoveryLookup() {
       </div>
       <h1 className="font-display text-2xl font-bold text-ink-900">Track your order</h1>
       <p className="mt-2 text-sm text-ink-600">
-        Enter the recovery code you saved when you created your order.
+        Enter the recovery code you received when you created your swap. You can find it in the file you downloaded or copied at the end of the order flow.
       </p>
 
       <div className="mt-6 rounded-xl2 border border-ink-900/8 bg-white p-6 shadow-soft">

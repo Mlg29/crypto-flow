@@ -1,16 +1,21 @@
-import { NavLink, Outlet, Link } from "react-router-dom";
+import { NavLink, Outlet, Link, useNavigate } from "react-router-dom";
 import {
   BarChart3,
   Bell,
+  ClipboardList,
   Code2,
   LayoutDashboard,
   Receipt,
   Send,
+  Shield,
+  Users,
   Waves,
   ChevronDown,
 } from "lucide-react";
 import { SandboxBanner } from "../components/SandboxBanner";
 import { useApp } from "../lib/AppContext";
+import { clearAuth } from "../store/authSlice";
+import { useAppDispatch } from "../store";
 import { useState } from "react";
 
 const NAV = [
@@ -19,10 +24,15 @@ const NAV = [
   { to: "/dashboard/payouts", label: "Payouts", icon: Send },
   { to: "/dashboard/developers", label: "Developers", icon: Code2 },
   { to: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
+  { to: "/dashboard/team", label: "Team", icon: Users },
+  { to: "/dashboard/roles", label: "Roles", icon: Shield },
+  { to: "/dashboard/audit-logs", label: "Audit Logs", icon: ClipboardList },
 ];
 
 export function AppLayout() {
   const { env, toggleEnv } = useApp();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -105,14 +115,30 @@ export function AppLayout() {
                 </button>
                 {menuOpen && (
                   <div className="absolute right-0 top-11 z-20 w-44 overflow-hidden rounded-lg border border-ink-900/8 bg-white py-1 shadow-soft">
-                    {["Settings", "Team", "Billing", "Sign out"].map((it) => (
-                      <button
-                        key={it}
-                        className="block w-full px-3.5 py-2 text-left text-sm text-ink-700 hover:bg-ink-900/[0.04]"
-                      >
-                        {it}
-                      </button>
-                    ))}
+                    <Link
+                      to="/dashboard/profile"
+                      onClick={() => setMenuOpen(false)}
+                      className="block w-full px-3.5 py-2 text-left text-sm text-ink-700 hover:bg-ink-900/[0.04]"
+                    >
+                      Settings
+                    </Link>
+                    <Link
+                      to="/dashboard/team"
+                      onClick={() => setMenuOpen(false)}
+                      className="block w-full px-3.5 py-2 text-left text-sm text-ink-700 hover:bg-ink-900/[0.04]"
+                    >
+                      Team
+                    </Link>
+                    <button
+                      onClick={() => {
+                        dispatch(clearAuth());
+                        setMenuOpen(false);
+                        navigate('/onboarding/login');
+                      }}
+                      className="block w-full px-3.5 py-2 text-left text-sm text-danger hover:bg-ink-900/[0.04]"
+                    >
+                      Sign out
+                    </button>
                   </div>
                 )}
               </div>

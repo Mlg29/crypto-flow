@@ -12,6 +12,9 @@ import { DepositStatus } from "./pages/public/DepositStatus";
 import { RecoveryLookup } from "./pages/public/RecoveryLookup";
 import { InvoicePay } from "./pages/public/InvoicePay";
 
+import { Login } from "./pages/onboarding/Login";
+import { ForgotPassword } from "./pages/onboarding/ForgotPassword";
+import { AcceptInvite } from "./pages/onboarding/AcceptInvite";
 import { SignUp } from "./pages/onboarding/SignUp";
 import { VerifyEmail } from "./pages/onboarding/VerifyEmail";
 import { BusinessVerification } from "./pages/onboarding/BusinessVerification";
@@ -25,6 +28,10 @@ import { InvoiceDetail } from "./pages/dashboard/InvoiceDetail";
 import { Payouts } from "./pages/dashboard/Payouts";
 import { Developers } from "./pages/dashboard/Developers";
 import { Analytics } from "./pages/dashboard/Analytics";
+import { Team } from "./pages/dashboard/Team";
+import { AuditLogs } from "./pages/dashboard/AuditLogs";
+import { Roles } from "./pages/dashboard/Roles";
+import { Profile } from "./pages/dashboard/Profile";
 
 export default function App() {
   return (
@@ -40,6 +47,9 @@ export default function App() {
 
           <Route path="/pay/:invoiceId" element={<InvoicePay />} />
 
+          <Route path="/onboarding/login" element={<Login />} />
+          <Route path="/onboarding/forgot-password" element={<ForgotPassword />} />
+          <Route path="/onboarding/accept-invite" element={<AcceptInvite />} />
           <Route path="/onboarding/signup" element={<SignUp />} />
           <Route path="/onboarding/verify-email" element={<VerifyEmail />} />
           <Route path="/onboarding/verify" element={<BusinessVerification />} />
@@ -54,6 +64,10 @@ export default function App() {
             <Route path="/dashboard/payouts" element={<Payouts />} />
             <Route path="/dashboard/developers" element={<Developers />} />
             <Route path="/dashboard/analytics" element={<Analytics />} />
+            <Route path="/dashboard/team" element={<Team />} />
+            <Route path="/dashboard/audit-logs" element={<AuditLogs />} />
+            <Route path="/dashboard/roles" element={<Roles />} />
+            <Route path="/dashboard/profile" element={<Profile />} />
           </Route>
         </Routes>
         <ToastHost />

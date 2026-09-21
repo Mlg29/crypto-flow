@@ -4,6 +4,7 @@ import { Waves } from 'lucide-react';
 import { useLoginMutation } from '../../store/api/authApi';
 import { setCredentials } from '../../store/authSlice';
 import { useAppDispatch } from '../../store';
+import { toast } from '../../lib/AppContext';
 
 export function Login() {
   const navigate = useNavigate();
@@ -11,18 +12,16 @@ export function Login() {
   const [login, { isLoading }] = useLoginMutation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
     try {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials({ accessToken: res.data.access_token, email }));
       navigate('/dashboard');
     } catch (err: unknown) {
       const message = (err as { data?: { message?: string } })?.data?.message;
-      setError(message ?? 'Login failed. Please try again.');
+      toast.danger(message ?? 'Login failed. Please try again.');
     }
   }
 
@@ -64,8 +63,6 @@ export function Login() {
               className="w-full rounded-lg border border-ink-900/12 px-3.5 py-2.5 text-sm outline-none focus:border-cobalt-400"
             />
           </div>
-
-          {error && <p className="text-sm text-danger">{error}</p>}
 
           <button
             type="submit"

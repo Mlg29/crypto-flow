@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Waves } from 'lucide-react';
 import { useAcceptInviteMutation } from '../../store/api/merchantApi';
+import { toast } from '../../lib/AppContext';
 
 export function AcceptInvite() {
   const navigate = useNavigate();
@@ -10,17 +11,16 @@ export function AcceptInvite() {
 
   const [acceptInvite, { isLoading }] = useAcceptInviteMutation();
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
     try {
       await acceptInvite({ token, password }).unwrap();
+      toast.success('Account activated. Please sign in.');
       navigate('/onboarding/login');
     } catch (err: unknown) {
       const message = (err as { data?: { message?: string } })?.data?.message;
-      setError(message ?? 'Failed to accept invite. The link may have expired.');
+      toast.danger(message ?? 'Failed to accept invite. The link may have expired.');
     }
   }
 
@@ -67,8 +67,6 @@ export function AcceptInvite() {
               className="w-full rounded-lg border border-ink-900/12 px-3.5 py-2.5 text-sm outline-none focus:border-cobalt-400"
             />
           </div>
-
-          {error && <p className="text-sm text-danger">{error}</p>}
 
           <button
             type="submit"

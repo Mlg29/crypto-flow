@@ -15,8 +15,10 @@ import {
 import { SandboxBanner } from "../components/SandboxBanner";
 import { useApp } from "../lib/AppContext";
 import { clearAuth } from "../store/authSlice";
-import { useAppDispatch } from "../store";
+import { useAppDispatch, useAppSelector } from "../store";
 import { useState } from "react";
+import { useGetUserQuery } from "../store/api/userApi";
+import { useGetMerchantsQuery } from "../store/api/merchantApi";
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, end: true },
@@ -34,6 +36,17 @@ export function AppLayout() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const merchantId = useAppSelector((s) => s.auth.merchantId);
+  const { data: userData } = useGetUserQuery();
+  const { data: merchantData } = useGetMerchantsQuery();
+
+  const user = userData?.data;
+  const merchant = merchantData?.data?.merchants?.find((m) => m.id === merchantId)
+    ?? merchantData?.data?.merchants?.[0];
+
+  const initials = user?.first_name && user?.last_name
+    ? `${user.first_name[0]}${user.last_name[0]}`.toUpperCase()
+    : user?.email?.[0]?.toUpperCase() ?? '?';
 
   return (
     <div className="min-h-screen bg-paper">
@@ -96,7 +109,8 @@ export function AppLayout() {
               <span className="font-display text-base font-bold text-ink-900">CryptoFlow</span>
             </div>
             <div className="hidden text-sm text-ink-500 lg:block">
-              Northwind Studio <span className="mx-1.5 text-ink-300">·</span> merchant workspace
+              {merchant?.business_name ?? 'Merchant workspace'}
+              <span className="mx-1.5 text-ink-300">·</span> merchant workspace
             </div>
             <div className="flex items-center gap-3">
               <button className="relative rounded-full p-2 text-ink-500 hover:bg-ink-900/5" aria-label="Notifications">
@@ -109,7 +123,7 @@ export function AppLayout() {
                   className="flex items-center gap-2 rounded-full border border-ink-900/8 py-1 pl-1 pr-2.5 hover:bg-ink-900/[0.03]"
                 >
                   <span className="grid h-7 w-7 place-items-center rounded-full bg-cobalt-500 text-xs font-bold text-white">
-                    NW
+                    {initials}
                   </span>
                   <ChevronDown size={14} className="text-ink-500" />
                 </button>

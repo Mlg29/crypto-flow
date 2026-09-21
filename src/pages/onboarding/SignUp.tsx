@@ -9,6 +9,7 @@ import {
 } from '../../store/api/authApi';
 import { setCredentials } from '../../store/authSlice';
 import { useAppDispatch } from '../../store';
+import { toast } from '../../lib/AppContext';
 
 const INDUSTRIES = ['E-commerce', 'Marketplaces', 'SaaS & web services', 'Payroll teams', 'Gaming', 'Trading platforms'];
 
@@ -44,7 +45,6 @@ export function SignUp() {
   const [countryId, setCountryId] = useState('');
   const [strength, setStrength] = useState(0);
   const [agreed, setAgreed] = useState(false);
-  const [error, setError] = useState('');
 
   const [digits, setDigits] = useState(Array(6).fill(''));
   const refs = useRef<(HTMLInputElement | null)[]>([]);
@@ -69,19 +69,17 @@ export function SignUp() {
 
   async function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
     try {
       const res = await sendOtp({ email, activity_type: 'verify_email' }).unwrap();
       setActivityId(res.data.activity_id);
       setStep('otp');
     } catch (err: unknown) {
       const message = (err as { data?: { message?: string } })?.data?.message;
-      setError(message ?? 'Failed to send verification code. Please try again.');
+      toast.danger(message ?? 'Failed to send verification code. Please try again.');
     }
   }
 
   async function handleOtpSubmit() {
-    setError('');
     try {
       await verifyOtp({ otp: digits.join(''), activity_id: activityId }).unwrap();
 
@@ -100,23 +98,23 @@ export function SignUp() {
         }),
       );
 
-      navigate('/onboarding/verification');
+      navigate('/dashboard');
     } catch (err: unknown) {
       const message = (err as { data?: { message?: string } })?.data?.message;
-      setError(message ?? 'Verification failed. Please try again.');
+      toast.danger(message ?? 'Verification failed. Please try again.');
       setDigits(Array(6).fill(''));
       refs.current[0]?.focus();
     }
   }
 
   async function handleResend() {
-    setError('');
     try {
       const res = await sendOtp({ email, activity_id: activityId }).unwrap();
       setActivityId(res.data.activity_id);
+      toast.success('Code resent.');
     } catch (err: unknown) {
       const message = (err as { data?: { message?: string } })?.data?.message;
-      setError(message ?? 'Failed to resend code.');
+      toast.danger(message ?? 'Failed to resend code.');
     }
   }
 
@@ -202,8 +200,6 @@ export function SignUp() {
               ))}
             </div>
 
-            {error && <p className="mt-3 text-sm text-danger">{error}</p>}
-
             <button
               onClick={handleOtpSubmit}
               disabled={!otpComplete || isBusy}
@@ -223,7 +219,7 @@ export function SignUp() {
             </button>
 
             <button
-              onClick={() => { setStep('form'); setError(''); setDigits(Array(6).fill('')); }}
+              onClick={() => { setStep('form'); setDigits(Array(6).fill('')); }}
               className="mt-2 w-full text-sm text-ink-400 hover:text-ink-600"
             >
               ← Back to sign up
@@ -310,7 +306,6 @@ export function SignUp() {
               />
               I agree to the Terms of Service and Privacy Policy
             </label>
-            {error && <p className="text-sm text-danger">{error}</p>}
             <button
               type="submit"
               disabled={!agreed || isSending}

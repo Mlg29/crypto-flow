@@ -1,4 +1,5 @@
-import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { toast } from "./toast";
 
 type Env = "sandbox" | "live";
 
@@ -34,6 +35,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }, 4200);
   }, []);
 
+  useEffect(() => {
+    toast.register(pushToast);
+  }, [pushToast]);
+
   const toggleEnv = useCallback(() => {
     setEnv((e) => (e === "sandbox" ? "live" : "sandbox"));
   }, []);
@@ -50,3 +55,5 @@ export function useApp() {
   if (!ctx) throw new Error("useApp must be used within AppProvider");
   return ctx;
 }
+
+export { toast } from "./toast";

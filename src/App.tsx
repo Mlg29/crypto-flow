@@ -18,7 +18,6 @@ import { AcceptInvite } from "./pages/onboarding/AcceptInvite";
 import { SignUp } from "./pages/onboarding/SignUp";
 import { VerifyEmail } from "./pages/onboarding/VerifyEmail";
 import { BusinessVerification } from "./pages/onboarding/BusinessVerification";
-import { VerificationStatus } from "./pages/onboarding/VerificationStatus";
 
 import { DashboardHome } from "./pages/dashboard/DashboardHome";
 import { WalletDetail } from "./pages/dashboard/WalletDetail";
@@ -53,7 +52,7 @@ export default function App() {
           <Route path="/onboarding/signup" element={<SignUp />} />
           <Route path="/onboarding/verify-email" element={<VerifyEmail />} />
           <Route path="/onboarding/verify" element={<BusinessVerification />} />
-          <Route path="/onboarding/verification" element={<VerificationStatus />} />
+
 
           <Route element={<AppLayout />}>
             <Route path="/dashboard" element={<DashboardHome />} />

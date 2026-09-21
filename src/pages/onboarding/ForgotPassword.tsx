@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { KeyRound } from 'lucide-react';
 import { useSendOtpMutation, useVerifyOtpMutation, useResetPasswordMutation } from '../../store/api/authApi';
+import { toast } from '../../lib/AppContext';
 
 type Step = 'email' | 'otp' | 'password';
 
@@ -16,7 +17,6 @@ export function ForgotPassword() {
   const [activityId, setActivityId] = useState('');
   const [digits, setDigits] = useState(Array(6).fill(''));
   const [newPassword, setNewPassword] = useState('');
-  const [error, setError] = useState('');
   const refs = useRef<(HTMLInputElement | null)[]>([]);
 
   function setDigit(i: number, v: string) {
@@ -29,38 +29,36 @@ export function ForgotPassword() {
 
   async function handleSendOtp(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
     try {
       const res = await sendOtp({ email, activity_type: 'reset_password' }).unwrap();
       setActivityId(res.data.activity_id);
       setStep('otp');
     } catch (err: unknown) {
       const message = (err as { data?: { message?: string } })?.data?.message;
-      setError(message ?? 'Failed to send code. Please try again.');
+      toast.danger(message ?? 'Failed to send code. Please try again.');
     }
   }
 
   async function handleVerifyOtp() {
-    setError('');
     const otp = digits.join('');
     try {
       await verifyOtp({ otp, activity_id: activityId }).unwrap();
       setStep('password');
     } catch (err: unknown) {
       const message = (err as { data?: { message?: string } })?.data?.message;
-      setError(message ?? 'Invalid code. Please try again.');
+      toast.danger(message ?? 'Invalid code. Please try again.');
     }
   }
 
   async function handleResetPassword(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
     try {
       await resetPassword({ email, password: newPassword }).unwrap();
+      toast.success('Password reset successfully.');
       navigate('/onboarding/login');
     } catch (err: unknown) {
       const message = (err as { data?: { message?: string } })?.data?.message;
-      setError(message ?? 'Failed to reset password. Please try again.');
+      toast.danger(message ?? 'Failed to reset password. Please try again.');
     }
   }
 
@@ -88,7 +86,6 @@ export function ForgotPassword() {
                 className="w-full rounded-lg border border-ink-900/12 px-3.5 py-2.5 text-sm outline-none focus:border-cobalt-400"
               />
             </div>
-            {error && <p className="text-sm text-danger">{error}</p>}
             <button
               type="submit"
               disabled={isSending}
@@ -119,7 +116,6 @@ export function ForgotPassword() {
               />
             ))}
           </div>
-          {error && <p className="mt-3 text-sm text-danger">{error}</p>}
           <button
             onClick={handleVerifyOtp}
             disabled={isVerifying || digits.some((d) => d === '')}
@@ -128,7 +124,10 @@ export function ForgotPassword() {
             {isVerifying ? 'Verifying…' : 'Verify code'}
           </button>
           <button
-            onClick={() => sendOtp({ email, activity_id: activityId }).unwrap().catch(() => {})}
+            onClick={() => sendOtp({ email, activity_id: activityId }).unwrap().catch((err: unknown) => {
+              const message = (err as { data?: { message?: string } })?.data?.message;
+              toast.danger(message ?? 'Failed to resend code.');
+            })}
             className="mt-3 text-sm font-semibold text-cobalt-600"
           >
             Resend code
@@ -153,7 +152,6 @@ export function ForgotPassword() {
                 className="w-full rounded-lg border border-ink-900/12 px-3.5 py-2.5 text-sm outline-none focus:border-cobalt-400"
               />
             </div>
-            {error && <p className="text-sm text-danger">{error}</p>}
             <button
               type="submit"
               disabled={isResetting}

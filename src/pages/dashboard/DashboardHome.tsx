@@ -1,14 +1,37 @@
 import { Link } from "react-router-dom";
 import { ArrowDownRight, ArrowUpRight, FileText, Plus, Send, Wallet } from "lucide-react";
 import { ACTIVITY_FEED, CHAINS, WALLET_BALANCES, fmtAmount, fmtUsd } from "../../lib/data";
+import { useGetUserQuery } from "../../store/api/userApi";
+import { useGetMerchantsQuery } from "../../store/api/merchantApi";
+import { useAppSelector } from "../../store";
+
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+}
 
 export function DashboardHome() {
   const totalUsd = WALLET_BALANCES.reduce((sum, w) => sum + w.available * w.fiatRate, 0);
+  const merchantId = useAppSelector((s) => s.auth.merchantId);
+  const { data: userData, error } = useGetUserQuery();
+  const { data: merchantData, error: merchantErr } = useGetMerchantsQuery();
+
+  console.log({ userData, merchantData, error, merchantErr, merchantId })
+
+  const user = userData?.data;
+  const merchant = merchantData?.data?.merchants?.find((m) => m.id === merchantId)
+    ?? merchantData?.data?.merchants?.[0];
+
+  const displayName = user?.first_name
+    ?? merchant?.business_name
+    ?? 'there';
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-2xl font-bold text-ink-900">Good afternoon, Northwind</h1>
+        <h1 className="font-display text-2xl font-bold text-ink-900">{getGreeting()}, {displayName}</h1>
         <p className="mt-1 text-sm text-ink-500">Here's what's happening across your wallets today.</p>
       </div>
 
@@ -65,13 +88,12 @@ export function DashboardHome() {
             {ACTIVITY_FEED.map((a) => (
               <div key={a.id} className="flex items-center gap-3 px-6 py-3.5">
                 <span
-                  className={`grid h-8 w-8 shrink-0 place-items-center rounded-full ${
-                    a.tone === "success"
-                      ? "bg-success-light text-success"
-                      : a.tone === "danger"
+                  className={`grid h-8 w-8 shrink-0 place-items-center rounded-full ${a.tone === "success"
+                    ? "bg-success-light text-success"
+                    : a.tone === "danger"
                       ? "bg-danger-light text-danger"
                       : "bg-ink-900/5 text-ink-500"
-                  }`}
+                    }`}
                 >
                   {a.amount >= 0 ? <ArrowDownRight size={14} /> : <ArrowUpRight size={14} />}
                 </span>

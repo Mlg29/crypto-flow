@@ -18,7 +18,6 @@ export function DashboardHome() {
   const { data: userData, error } = useGetUserQuery();
   const { data: merchantData, error: merchantErr } = useGetMerchantsQuery();
 
-  console.log({ userData, merchantData, error, merchantErr, merchantId })
 
   const user = userData?.data;
   const merchant = merchantData?.data?.merchants?.find((m) => m.id === merchantId)

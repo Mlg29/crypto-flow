@@ -94,6 +94,7 @@ export function SignUp() {
         setCredentials({
           accessToken: res.data.access_token,
           email,
+          accountId: res.data.merchant.owner_id,
           merchantId: res.data.merchant.id,
         }),
       );

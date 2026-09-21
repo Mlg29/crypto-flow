@@ -13,6 +13,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { SandboxBanner } from "../components/SandboxBanner";
+import { ConfirmModal } from "../components/ConfirmModal";
 import { useApp } from "../lib/AppContext";
 import { clearAuth } from "../store/authSlice";
 import { useAppDispatch, useAppSelector } from "../store";
@@ -36,6 +37,7 @@ export function AppLayout() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [signOutOpen, setSignOutOpen] = useState(false);
   const merchantId = useAppSelector((s) => s.auth.merchantId);
   const { data: userData } = useGetUserQuery();
   const { data: merchantData } = useGetMerchantsQuery();
@@ -144,11 +146,7 @@ export function AppLayout() {
                       Team
                     </Link>
                     <button
-                      onClick={() => {
-                        dispatch(clearAuth());
-                        setMenuOpen(false);
-                        navigate('/onboarding/login');
-                      }}
+                      onClick={() => { setMenuOpen(false); setSignOutOpen(true); }}
                       className="block w-full px-3.5 py-2 text-left text-sm text-danger hover:bg-ink-900/[0.04]"
                     >
                       Sign out
@@ -164,6 +162,20 @@ export function AppLayout() {
           </main>
         </div>
       </div>
+
+      <ConfirmModal
+        open={signOutOpen}
+        title="Sign out"
+        tone="danger"
+        confirmLabel="Sign out"
+        onClose={() => setSignOutOpen(false)}
+        onConfirm={() => {
+          dispatch(clearAuth());
+          navigate('/onboarding/login');
+        }}
+      >
+        Are you sure you want to sign out of your account?
+      </ConfirmModal>
 
       <nav className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-around border-t border-ink-900/8 bg-white py-2 lg:hidden">
         {NAV.map((item) => (

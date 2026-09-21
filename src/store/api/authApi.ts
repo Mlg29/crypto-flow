@@ -129,6 +129,31 @@ export const authApi = baseApi.injectEndpoints({
     >({
       query: (params = {}) => ({ url: '/api/v1/location/country', params }),
     }),
+
+    getAllCountries: builder.query<Country[], void>({
+      async queryFn(_arg, _api, _extraOptions, baseQuery) {
+        const limit = 100;
+        let page = 1;
+        let allItems: Country[] = [];
+
+        while (true) {
+          const result = await baseQuery({
+            url: '/api/v1/location/country',
+            params: { page, limit },
+          });
+
+          if (result.error) return { error: result.error };
+
+          const body = result.data as ApiResponse<{ items: Country[]; pagination: Pagination }>;
+          allItems = allItems.concat(body.data.items);
+
+          if (!body.data.pagination.has_next) break;
+          page++;
+        }
+
+        return { data: allItems };
+      },
+    }),
   }),
 });
 
@@ -142,4 +167,5 @@ export const {
   useGetActivitiesQuery,
   useCreateMerchantMutation,
   useGetCountriesQuery,
+  useGetAllCountriesQuery,
 } = authApi;

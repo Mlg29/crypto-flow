@@ -24,14 +24,16 @@ function Modal({
   title,
   onClose,
   children,
+  wide,
 }: {
   title: string;
   onClose: () => void;
   children: ReactNode;
+  wide?: boolean;
 }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/50 p-4 backdrop-blur-sm">
-      <div className="flex w-full max-w-md flex-col rounded-xl bg-white shadow-glow">
+      <div className={`flex w-full flex-col rounded-xl bg-white shadow-glow ${wide ? 'max-w-2xl' : 'max-w-md'}`}>
         <div className="flex shrink-0 items-center justify-between border-b border-ink-900/8 px-6 py-4">
           <h3 className="font-display text-base font-semibold text-ink-900">{title}</h3>
           <button
@@ -50,11 +52,9 @@ function Modal({
 function MemberRolePanel({
   merchantId,
   accountId,
-  onClose,
 }: {
   merchantId: string;
   accountId: string;
-  onClose: () => void;
 }) {
   const { pushToast } = useApp();
 
@@ -122,14 +122,7 @@ function MemberRolePanel({
   }
 
   return (
-    <div className="mb-6 rounded-xl border border-ink-900/8 bg-white p-5 shadow-soft">
-      <div className="mb-4 flex items-center justify-between">
-        <p className="text-sm font-semibold text-ink-900">Manage member roles & permissions</p>
-        <button onClick={onClose} className="rounded-md p-1 text-ink-400 hover:bg-ink-900/[0.04] hover:text-ink-700">
-          <X size={16} />
-        </button>
-      </div>
-
+    <div className="max-h-[70vh] overflow-y-auto px-6 py-5">
       <div className="mb-5">
         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-500">Current roles</p>
         {loadingRoles ? (
@@ -395,11 +388,12 @@ export function Team() {
       )}
 
       {managingRolesFor && merchantId && (
-        <MemberRolePanel
-          merchantId={merchantId}
-          accountId={managingRolesFor}
-          onClose={() => setManagingRolesFor(null)}
-        />
+        <Modal title="Manage roles & permissions" onClose={() => setManagingRolesFor(null)} wide>
+          <MemberRolePanel
+            merchantId={merchantId}
+            accountId={managingRolesFor}
+          />
+        </Modal>
       )}
 
       <div className="rounded-xl border border-ink-900/8 bg-white shadow-soft">

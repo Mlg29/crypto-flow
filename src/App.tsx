@@ -48,7 +48,7 @@ export default function App() {
 
           <Route path="/onboarding/login" element={<Login />} />
           <Route path="/onboarding/forgot-password" element={<ForgotPassword />} />
-          <Route path="/onboarding/accept-invite" element={<AcceptInvite />} />
+          <Route path="/accept-invite" element={<AcceptInvite />} />
           <Route path="/onboarding/signup" element={<SignUp />} />
           <Route path="/onboarding/verify-email" element={<VerifyEmail />} />
           <Route path="/onboarding/verify" element={<BusinessVerification />} />

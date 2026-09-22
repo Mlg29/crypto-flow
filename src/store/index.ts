@@ -1,6 +1,6 @@
 import { configureStore, isRejectedWithValue, type Middleware } from '@reduxjs/toolkit';
 import { useDispatch, useSelector } from 'react-redux';
-import authReducer from './authSlice';
+import authReducer, { clearAuth } from './authSlice';
 import { baseApi } from './api/baseApi';
 import { toast } from '../lib/toast';
 
@@ -15,13 +15,24 @@ const apiErrorMiddleware: Middleware = () => (next) => (action) => {
   return next(action);
 };
 
+const resetCacheOnLogout: Middleware =
+  ({ dispatch }) =>
+  (next) =>
+  (action) => {
+    const result = next(action);
+    if (clearAuth.match(action as Parameters<typeof clearAuth.match>[0])) {
+      dispatch(baseApi.util.resetApiState());
+    }
+    return result;
+  };
+
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     [baseApi.reducerPath]: baseApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(baseApi.middleware, apiErrorMiddleware),
+    getDefaultMiddleware().concat(baseApi.middleware, apiErrorMiddleware, resetCacheOnLogout),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -15,11 +15,14 @@ import {
 import { SandboxBanner } from "../components/SandboxBanner";
 import { ConfirmModal } from "../components/ConfirmModal";
 import { useApp } from "../lib/AppContext";
-import { clearAuth } from "../store/authSlice";
+import { clearAuth, setCredentials, setMerchant } from "../store/authSlice";
+import { getCookie } from "../lib/cookie";
 import { useAppDispatch, useAppSelector } from "../store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetUserQuery } from "../store/api/userApi";
 import { useGetMerchantsQuery } from "../store/api/merchantApi";
+import { merchantApi } from "../store/api/merchantApi";
+import { useRefreshMutation } from "../store/api/authApi";
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, end: true },
@@ -38,9 +41,52 @@ export function AppLayout() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [signOutOpen, setSignOutOpen] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
+  const accessToken = useAppSelector((s) => s.auth.accessToken);
+  const refreshToken = useAppSelector((s) => s.auth.refreshToken);
   const merchantId = useAppSelector((s) => s.auth.merchantId);
-  const { data: userData } = useGetUserQuery();
-  const { data: merchantData } = useGetMerchantsQuery();
+  const [refresh] = useRefreshMutation();
+
+  useEffect(() => {
+    if (accessToken) {
+      setAuthReady(true);
+      return;
+    }
+    if (!refreshToken) {
+      navigate('/onboarding/login', { replace: true });
+      return;
+    }
+    refresh({ refresh_token: refreshToken })
+      .unwrap()
+      .then(async (res) => {
+        const refreshToken = getCookie('refresh_token') ?? undefined;
+        dispatch(setCredentials({ accessToken: res.data.access_token, refreshToken, email: '' }));
+        try {
+          const merchantRes = await dispatch(merchantApi.endpoints.getMerchants.initiate()).unwrap();
+          const merchant = merchantRes.data?.merchants?.[0];
+          if (merchant) {
+            dispatch(setMerchant({ merchantId: merchant.id, accountId: merchant.owner_id }));
+          }
+        } catch {
+        }
+        setAuthReady(true);
+      })
+      .catch(() => {
+        dispatch(clearAuth());
+        navigate('/onboarding/login', { replace: true });
+      });
+  }, []);
+
+  const { data: userData } = useGetUserQuery(undefined, { skip: !authReady });
+  const { data: merchantData } = useGetMerchantsQuery(undefined, { skip: !authReady });
+
+  if (!authReady) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-paper">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-cobalt-500 border-t-transparent" />
+      </div>
+    );
+  }
 
   const user = userData?.data;
   const merchant = merchantData?.data?.merchants?.find((m) => m.id === merchantId)

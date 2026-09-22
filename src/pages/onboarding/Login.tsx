@@ -5,6 +5,7 @@ import { useLoginMutation, useSendOtpMutation, useVerifyOtpMutation } from '../.
 import { setCredentials, setMerchant } from '../../store/authSlice';
 import { useAppDispatch } from '../../store';
 import { toast } from '../../lib/AppContext';
+import { getCookie } from '../../lib/cookie';
 import { merchantApi } from '../../store/api/merchantApi';
 
 function Spinner() {
@@ -46,10 +47,11 @@ export function Login() {
     try {
       const res = await login({ email, password }).unwrap();
       const { access_token, account } = res.data;
+      const refreshToken = getCookie('refresh_token') ?? undefined;
 
-      loginCredentials.current = { accessToken: access_token, email: account.email, accountId: account.id };
+      loginCredentials.current = { accessToken: access_token, refreshToken, email: account.email, accountId: account.id };
 
-      dispatch(setCredentials({ accessToken: access_token, email: account.email, accountId: account.id }));
+      dispatch(setCredentials({ accessToken: access_token, refreshToken, email: account.email, accountId: account.id }));
 
       const otpRes = await sendOtp({ email: account.email, activity_type: 'verify_session' }).unwrap();
       setActivityId(otpRes.data.activity_id);

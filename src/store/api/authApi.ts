@@ -77,7 +77,7 @@ export const authApi = baseApi.injectEndpoints({
 
     refresh: builder.mutation<
       ApiResponse<{ access_token: string }>,
-      { refresh_token?: string }
+      { refresh_token: string }
     >({
       query: (body) => ({ url: '/api/v1/account/refresh', method: 'POST', body }),
     }),

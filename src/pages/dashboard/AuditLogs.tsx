@@ -52,15 +52,17 @@ export function AuditLogs() {
             <thead>
               <tr className="border-b border-ink-900/6">
                 <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-ink-400">Account</th>
+                <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-ink-400">Business Name</th>
                 <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-ink-400">Resource</th>
                 <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-ink-400">Action</th>
                 <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-ink-400">Date</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-ink-900/6">
-              {logs.map((log) => (
+              {logs.map((log: any) => (
                 <tr key={log.id} className="hover:bg-ink-900/[0.02]">
                   <td className="px-5 py-3.5 text-ink-700">{log.account?.email ?? '—'}</td>
+                  <td className="px-5 py-3.5 text-ink-700">{log?.metadata?.business_name ?? '—'}</td>
                   <td className="px-5 py-3.5">
                     <span className="inline-flex items-center rounded-full bg-ink-900/5 px-2.5 py-0.5 text-xs font-semibold text-ink-600">
                       {log.resource}

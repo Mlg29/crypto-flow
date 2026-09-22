@@ -10,6 +10,7 @@ import {
 import { setCredentials } from '../../store/authSlice';
 import { useAppDispatch } from '../../store';
 import { toast } from '../../lib/AppContext';
+import { getCookie } from '../../lib/cookie';
 
 const INDUSTRIES = ['E-commerce', 'Marketplaces', 'SaaS & web services', 'Payroll teams', 'Gaming', 'Trading platforms'];
 
@@ -90,9 +91,12 @@ export function SignUp() {
         password,
       }).unwrap();
 
+      const refreshToken = getCookie('refresh_token') ?? undefined;
+
       dispatch(
         setCredentials({
           accessToken: res.data.access_token,
+          refreshToken,
           email,
           accountId: res.data.merchant.owner_id,
           merchantId: res.data.merchant.id,

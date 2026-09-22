@@ -14,10 +14,10 @@ export interface Merchant {
 export interface MerchantInvite {
   id: string;
   role_id: string;
+  account_role_id: string;
   email: string;
   merchant_id: string;
   account_id: string;
-  account_mid: string;
   status: string;
   created_at: string;
   updated_at: string;
@@ -55,7 +55,7 @@ export const merchantApi = baseApi.injectEndpoints({
     }),
 
     acceptInvite: builder.mutation<
-      ApiResponse<{ needs_registration: boolean; merchant: Merchant; invite: MerchantInvite }>,
+      ApiResponse<{ requires_registration: boolean; email: string; invite: MerchantInvite }>,
       { token: string; password: string }
     >({
       query: (body) => ({ url: '/api/v1/merchants/invites/accept', method: 'POST', body }),
@@ -95,7 +95,7 @@ export const merchantApi = baseApi.injectEndpoints({
     }),
 
     suspendAccount: builder.mutation<
-      ApiResponse<MerchantAccount>,
+      ApiResponse<null>,
       { merchant_id: string; account_id: string }
     >({
       query: ({ merchant_id, account_id }) => ({
@@ -106,7 +106,7 @@ export const merchantApi = baseApi.injectEndpoints({
     }),
 
     activateAccount: builder.mutation<
-      ApiResponse<MerchantAccount>,
+      ApiResponse<null>,
       { merchant_id: string; account_id: string }
     >({
       query: ({ merchant_id, account_id }) => ({

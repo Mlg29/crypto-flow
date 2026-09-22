@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Mail, MoreHorizontal, RefreshCw, UserPlus, ShieldCheck, X } from 'lucide-react';
 import { useApp } from '../../lib/AppContext';
 import {
@@ -19,6 +19,33 @@ import {
   type Role,
 } from '../../store/api/rbacApi';
 import { useAppSelector } from '../../store';
+
+function Modal({
+  title,
+  onClose,
+  children,
+}: {
+  title: string;
+  onClose: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/50 p-4 backdrop-blur-sm">
+      <div className="flex w-full max-w-md flex-col rounded-xl bg-white shadow-glow">
+        <div className="flex shrink-0 items-center justify-between border-b border-ink-900/8 px-6 py-4">
+          <h3 className="font-display text-base font-semibold text-ink-900">{title}</h3>
+          <button
+            onClick={onClose}
+            className="rounded-full p-1 text-ink-400 hover:bg-ink-900/5 hover:text-ink-700"
+          >
+            <X size={18} />
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
 
 function MemberRolePanel({
   merchantId,
@@ -47,15 +74,13 @@ function MemberRolePanel({
 
   const availableRoles = rolesData?.data ?? [];
   const memberRoles: Role[] = memberRolesData?.data ?? [];
-  const allPermissions = allPermsData?.data ?? [];
-  const currentPerms: Record<string, boolean> = memberPermsData?.data ?? {};
+  const groupedPermissions = allPermsData?.data?.grouped_by_resource ?? {};
+  const currentPerms: string[] = memberPermsData?.data ?? [];
 
   async function handleAssign(e: React.FormEvent) {
     e.preventDefault();
     if (!assignRoleId) return;
-    const permissions = assignPerms.length
-      ? Object.fromEntries(assignPerms.map((p) => [p, true]))
-      : undefined;
+    const permissions = assignPerms.length ? assignPerms : undefined;
     await assignRole({ merchant_id: merchantId, account_id: accountId, role_id: assignRoleId, permissions })
       .unwrap()
       .then(() => pushToast('success', 'Role assigned successfully.'))
@@ -76,7 +101,7 @@ function MemberRolePanel({
   }
 
   function openPermsEdit() {
-    setSelectedPerms(Object.entries(currentPerms).filter(([, v]) => v).map(([k]) => k));
+    setSelectedPerms([...currentPerms]);
     setPermsRoleId(memberRoles[0]?.id ?? '');
     setShowPermsEdit(true);
   }
@@ -88,7 +113,7 @@ function MemberRolePanel({
       merchant_id: merchantId,
       account_id: accountId,
       role_id: permsRoleId,
-      permissions: Object.fromEntries(selectedPerms.map((p) => [p, true])),
+      permissions: selectedPerms,
     })
       .unwrap()
       .then(() => pushToast('success', 'Permissions updated successfully.'))
@@ -153,20 +178,27 @@ function MemberRolePanel({
             {isAssigning ? 'Assigning…' : 'Assign'}
           </button>
         </div>
-        {allPermissions.length > 0 && assignRoleId && (
+        {Object.keys(groupedPermissions).length > 0 && assignRoleId && (
           <div className="mt-3">
             <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-500">Permissions override (optional)</label>
-            <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
-              {allPermissions.map((p) => (
-                <label key={p.name} className="flex cursor-pointer items-center gap-2 text-sm text-ink-700">
-                  <input
-                    type="checkbox"
-                    checked={assignPerms.includes(p.name)}
-                    onChange={() => togglePerm(p.name, assignPerms, setAssignPerms)}
-                    className="rounded border-ink-900/20 accent-cobalt-500"
-                  />
-                  {p.name}
-                </label>
+            <div className="space-y-3">
+              {Object.entries(groupedPermissions).map(([resource, items]) => (
+                <div key={resource}>
+                  <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-ink-400">{resource}</p>
+                  <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+                    {items.map((item) => (
+                      <label key={item.permission} className="flex cursor-pointer items-center gap-2 text-sm text-ink-700">
+                        <input
+                          type="checkbox"
+                          checked={assignPerms.includes(item.permission)}
+                          onChange={() => togglePerm(item.permission, assignPerms, setAssignPerms)}
+                          className="rounded border-ink-900/20 accent-cobalt-500"
+                        />
+                        <span className="font-mono text-xs">{item.field ? `${item.action}:${item.field}` : item.action}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -201,17 +233,24 @@ function MemberRolePanel({
                 ))}
               </select>
             </div>
-            <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
-              {allPermissions.map((p) => (
-                <label key={p.name} className="flex cursor-pointer items-center gap-2 text-sm text-ink-700">
-                  <input
-                    type="checkbox"
-                    checked={selectedPerms.includes(p.name)}
-                    onChange={() => togglePerm(p.name, selectedPerms, setSelectedPerms)}
-                    className="rounded border-ink-900/20 accent-cobalt-500"
-                  />
-                  {p.name}
-                </label>
+            <div className="space-y-3">
+              {Object.entries(groupedPermissions).map(([resource, items]) => (
+                <div key={resource}>
+                  <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-ink-400">{resource}</p>
+                  <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+                    {items.map((item) => (
+                      <label key={item.permission} className="flex cursor-pointer items-center gap-2 text-sm text-ink-700">
+                        <input
+                          type="checkbox"
+                          checked={selectedPerms.includes(item.permission)}
+                          onChange={() => togglePerm(item.permission, selectedPerms, setSelectedPerms)}
+                          className="rounded border-ink-900/20 accent-cobalt-500"
+                        />
+                        <span className="font-mono text-xs">{item.field ? `${item.action}:${item.field}` : item.action}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
             <div className="mt-3 flex gap-2">
@@ -233,17 +272,15 @@ function MemberRolePanel({
           </form>
         ) : (
           <div className="flex flex-wrap gap-2">
-            {Object.entries(currentPerms)
-              .filter(([, v]) => v)
-              .map(([k]) => (
-                <span
-                  key={k}
-                  className="rounded-full bg-ink-900/5 px-2 py-0.5 text-[11px] font-semibold text-ink-500"
-                >
-                  {k}
-                </span>
-              ))}
-            {Object.keys(currentPerms).length === 0 && (
+            {currentPerms.map((perm) => (
+              <span
+                key={perm}
+                className="rounded-full bg-ink-900/5 px-2 py-0.5 font-mono text-[11px] font-semibold text-ink-500"
+              >
+                {perm}
+              </span>
+            ))}
+            {currentPerms.length === 0 && (
               <p className="text-xs text-ink-400">No permissions set.</p>
             )}
           </div>
@@ -304,45 +341,40 @@ export function Team() {
       </div>
 
       {showInvite && (
-        <form
-          onSubmit={handleInvite}
-          className="mb-6 rounded-xl border border-ink-900/8 bg-white p-5 shadow-soft"
-        >
-          <p className="mb-4 text-sm font-semibold text-ink-900">Invite a team member</p>
-          <div className="flex gap-3">
-            <div className="flex-1">
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-500">Email</label>
-              <input
-                type="email"
-                value={inviteEmail}
-                onChange={(e) => setInviteEmail(e.target.value)}
-                placeholder="member@business.com"
-                required
-                className="w-full rounded-lg border border-ink-900/12 px-3.5 py-2.5 text-sm outline-none focus:border-cobalt-400"
-              />
+        <Modal title="Invite team member" onClose={() => setShowInvite(false)}>
+          <form onSubmit={handleInvite}>
+            <div className="space-y-4 px-6 py-5">
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-500">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={inviteEmail}
+                  onChange={(e) => setInviteEmail(e.target.value)}
+                  placeholder="member@business.com"
+                  required
+                  className="w-full rounded-lg border border-ink-900/12 px-3.5 py-2.5 text-sm outline-none focus:border-cobalt-400"
+                />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-500">
+                  Role
+                </label>
+                <select
+                  value={inviteRole}
+                  onChange={(e) => setInviteRole(e.target.value)}
+                  required
+                  className="w-full rounded-lg border border-ink-900/12 px-3.5 py-2.5 text-sm outline-none focus:border-cobalt-400"
+                >
+                  <option value="">Select a role</option>
+                  {roles.map((r) => (
+                    <option key={r.id} value={r.id}>{r.name}</option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div className="w-52">
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-500">Role</label>
-              <select
-                value={inviteRole}
-                onChange={(e) => setInviteRole(e.target.value)}
-                required
-                className="w-full rounded-lg border border-ink-900/12 px-3.5 py-2.5 text-sm outline-none focus:border-cobalt-400"
-              >
-                <option value="">Select a role</option>
-                {roles.map((r) => (
-                  <option key={r.id} value={r.id}>{r.name}</option>
-                ))}
-              </select>
-            </div>
-            <div className="flex items-end gap-2">
-              <button
-                type="submit"
-                disabled={isInviting}
-                className="rounded-lg bg-cobalt-500 px-4 py-2.5 text-sm font-bold text-white hover:bg-cobalt-600 disabled:opacity-40"
-              >
-                {isInviting ? 'Sending…' : 'Send invite'}
-              </button>
+            <div className="flex items-center justify-end gap-3 border-t border-ink-900/8 px-6 py-4">
               <button
                 type="button"
                 onClick={() => setShowInvite(false)}
@@ -350,9 +382,16 @@ export function Team() {
               >
                 Cancel
               </button>
+              <button
+                type="submit"
+                disabled={isInviting}
+                className="rounded-lg bg-cobalt-500 px-4 py-2.5 text-sm font-bold text-white hover:bg-cobalt-600 disabled:opacity-40"
+              >
+                {isInviting ? 'Sending…' : 'Send invite'}
+              </button>
             </div>
-          </div>
-        </form>
+          </form>
+        </Modal>
       )}
 
       {managingRolesFor && merchantId && (
@@ -391,13 +430,12 @@ export function Team() {
                   </td>
                   <td className="px-5 py-4">
                     <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                        a.status === 'active'
-                          ? 'bg-success-light text-success'
-                          : a.status === 'suspended'
+                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${a.status === 'active'
+                        ? 'bg-success-light text-success'
+                        : a.status === 'suspended'
                           ? 'bg-danger-light text-danger'
                           : 'bg-ink-900/5 text-ink-500'
-                      }`}
+                        }`}
                     >
                       {a.status}
                     </span>
@@ -454,7 +492,10 @@ export function Team() {
                               activateAccount({ merchant_id: merchantId, account_id: a.account_id })
                                 .unwrap()
                                 .then(() => pushToast('success', 'Account activated.'))
-                                .catch(() => pushToast('danger', 'Failed to activate account.'));
+                                .catch((err) => {
+                                  const errMsg = err?.data?.message ?? err?.data?.message[0] ?? 'Failed to activate account.';
+                                  pushToast('danger', errMsg)
+                                });
                               setOpenMenu(null);
                             }}
                             className="w-full px-3.5 py-2 text-left text-sm text-success hover:bg-ink-900/[0.04]"

@@ -3,6 +3,7 @@ import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolk
 import type { RootState } from '../index';
 import { clearAuth, setCredentials } from '../authSlice';
 import { getDeviceId } from '../../lib/deviceId';
+import { getCookie } from '../../lib/cookie';
 
 const HMAC_SECRET = import.meta.env.VITE_HMAC_SIGNATURE_SECRET as string;
 
@@ -69,6 +70,7 @@ async function withSignature(args: string | FetchArgs): Promise<string | FetchAr
 
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_URL,
+  credentials: 'include',
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.accessToken;
     if (token) headers.set('Authorization', `Bearer ${token}`);
@@ -89,17 +91,27 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 
   if (!refreshPromise) {
     refreshPromise = (async () => {
+      const state = api.getState() as RootState;
+      const refreshToken = state.auth.refreshToken;
+
+      if (!refreshToken) {
+        api.dispatch(clearAuth());
+        return false;
+      }
+
       const refreshResult = await rawBaseQuery(
-        await withSignature({ url: '/api/v1/account/refresh', method: 'POST', body: {} }),
+        await withSignature({ url: '/api/v1/account/refresh', method: 'POST', body: { refresh_token: refreshToken } }),
         api,
         extraOptions,
       );
+
       if (refreshResult.data) {
         const data = (refreshResult.data as { data: { access_token: string } }).data;
-        const state = api.getState() as RootState;
+        const newRefreshToken = getCookie('refresh_token') ?? undefined;
         api.dispatch(
           setCredentials({
             accessToken: data.access_token,
+            refreshToken: newRefreshToken,
             email: state.auth.email!,
             merchantId: state.auth.merchantId ?? undefined,
           }),
@@ -114,6 +126,7 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
   }
 
   const refreshed = await refreshPromise;
+
   if (refreshed) {
     result = await rawBaseQuery(await withSignature(args), api, extraOptions);
   }

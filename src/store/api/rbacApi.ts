@@ -7,21 +7,30 @@ export interface Role {
   description: string;
   type: 'custom' | 'system';
   scope: 'system' | 'merchant';
-  permissions: Record<string, boolean>[];
+  permissions: string[];
   created_at: string;
   updated_at: string;
 }
 
-interface Permission {
-  name: string;
-  description: string;
+export interface PermissionItem {
+  permission: string;
+  action: string;
+  resource: string;
+  field: string | null;
+}
+
+interface PermissionsResponse {
+  permissions: PermissionItem[];
+  grouped_by_resource: Record<string, PermissionItem[]>;
+  actions: string[];
+  resources: string[];
 }
 
 export const rbacApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     createRole: builder.mutation<
       ApiResponse<Role>,
-      { name: string; description: string; permissions: Record<string, boolean>[]; type: string; scope: string }
+      { name: string; description: string; permissions: string[]; scope: string }
     >({
       query: (body) => ({ url: '/api/v1/rbac/roles', method: 'POST', body }),
       invalidatesTags: ['Roles'],
@@ -32,7 +41,7 @@ export const rbacApi = baseApi.injectEndpoints({
       providesTags: ['Roles'],
     }),
 
-    getPermissions: builder.query<ApiResponse<Permission[]>, void>({
+    getPermissions: builder.query<ApiResponse<PermissionsResponse>, void>({
       query: () => '/api/v1/rbac/permissions',
     }),
 
@@ -43,7 +52,7 @@ export const rbacApi = baseApi.injectEndpoints({
 
     updateRole: builder.mutation<
       ApiResponse<Role>,
-      { id: string; name?: string; description?: string; permissions?: Record<string, boolean>[] }
+      { id: string; name?: string; description?: string; permissions?: string[] }
     >({
       query: ({ id, ...body }) => ({ url: `/api/v1/rbac/roles/${id}`, method: 'PUT', body }),
       invalidatesTags: (_r, _e, { id }) => ['Roles', { type: 'Roles', id }],
@@ -78,7 +87,7 @@ export const rbacApi = baseApi.injectEndpoints({
 
     merchantAssignRole: builder.mutation<
       ApiResponse<null>,
-      { merchant_id: string; account_id: string; role_id: string; permissions?: Record<string, boolean> }
+      { merchant_id: string; account_id: string; role_id: string; permissions?: string[] }
     >({
       query: ({ merchant_id, ...body }) => ({
         url: `/api/v1/merchants/${merchant_id}/rbac/assign-role`,
@@ -89,7 +98,7 @@ export const rbacApi = baseApi.injectEndpoints({
 
     merchantRemoveRole: builder.mutation<
       ApiResponse<null>,
-      { merchant_id: string; account_id: string; role_id: string; permissions?: Record<string, boolean> }
+      { merchant_id: string; account_id: string; role_id: string; permissions?: string[] }
     >({
       query: ({ merchant_id, ...body }) => ({
         url: `/api/v1/merchants/${merchant_id}/rbac/remove-role`,
@@ -99,7 +108,7 @@ export const rbacApi = baseApi.injectEndpoints({
     }),
 
     getMerchantAccountPermissions: builder.query<
-      ApiResponse<Record<string, boolean>>,
+      ApiResponse<string[]>,
       { merchant_id: string; account_id: string }
     >({
       query: ({ merchant_id, account_id }) =>
@@ -108,7 +117,7 @@ export const rbacApi = baseApi.injectEndpoints({
 
     updateMerchantAccountPermissions: builder.mutation<
       ApiResponse<null>,
-      { merchant_id: string; account_id: string; role_id: string; permissions: Record<string, boolean> }
+      { merchant_id: string; account_id: string; role_id: string; permissions: string[] }
     >({
       query: ({ merchant_id, account_id, ...body }) => ({
         url: `/api/v1/merchants/${merchant_id}/rbac/accounts/${account_id}/permissions`,

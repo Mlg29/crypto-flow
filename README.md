@@ -49,7 +49,7 @@ Client side, endpoints are RTK Query slices in `lib/api/` (`auth`, `merchant`, `
 
 | Screen | Endpoints |
 | --- | --- |
-| Create merchant | `GET /location/country`, `POST /account/otp/send`, `POST /account/otp/verify`, `POST /merchants` |
+| Become a merchant | `GET /location/country`, `POST /account/otp/send`, `POST /account/otp/verify`, `POST /merchants` |
 | Log in | `POST /account/login`, `POST /account/otp/send` + `verify`, `GET /merchants` |
 | Forgot password | `POST /account/otp/send` + `verify`, `POST /account/reset-password` |
 | Accept invite | `POST /merchants/invites/accept` |

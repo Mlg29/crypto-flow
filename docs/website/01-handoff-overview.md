@@ -20,7 +20,7 @@ Ask the product owner to share both links with you (they are private until share
 ## 2. What is already built
 
 - Homepage with all ten sections, responsive from 360px to 1440px+
-- Sticky nav that shrinks on scroll, mobile menu, Log in / Create merchant
+- Sticky nav that shrinks on scroll, mobile menu, Log in / Become a merchant
 - Working rate calculator with indicative rates, count-up, rate-lock countdown, validation
 - All motion from the design, with `prefers-reduced-motion` support
 - Placeholder routes for Platform, Exchange, Security, Developers, Use cases, Sign up, Demo, Log in. Each lists the content it still needs

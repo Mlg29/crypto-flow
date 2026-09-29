@@ -38,8 +38,8 @@
 
 ## Sections (top to bottom)
 
-1. **Nav** (sticky, `night`): 80px tall desktop, 64px mobile; shrinks to 64/56px after 40px scroll. Logo left, 5 links (desktop), right: Log in (ghost), Create merchant (signal). Mobile: Log in + menu button (44px), full-height menu panel.
-2. **Hero** (`night`): centred on desktop, left-aligned on mobile. Headline (accent phrase in `signal`), one-line sub, Create merchant (signal, lg). Padding 128/128 desktop, 72/72 mobile.
+1. **Nav** (sticky, `night`): 80px tall desktop, 64px mobile; shrinks to 64/56px after 40px scroll. Logo left, 5 links (desktop), right: Log in (ghost), Become a merchant (signal). Mobile: Log in + menu button (44px), full-height menu panel.
+2. **Hero** (`night`): centred on desktop, left-aligned on mobile. Headline (accent phrase in `signal`), one-line sub, Become a merchant (signal, lg). Padding 128/128 desktop, 72/72 mobile.
 3. **Supported assets** (`surface-200`, bottom border): eyebrow + marquee of AssetPills, edge fade mask.
 4. **Platform**: header with aside paragraph; 3 pillars (middle one dark), each with number, title, body, three ticks.
 5. **Exchange** (`surface-200`, top and bottom borders): text column (eyebrow, h2, lead, four ticks, Request a quote + See supported pairs) and the Rate calculator (max 460px).
@@ -48,7 +48,7 @@
 8. **Getting started** (`surface-200`): "Approved fast. Live the same day." Three steps in a row with a green progress line that fills on reveal.
 9. **Developers**: 5/7 split; text + two buttons left, four API capability cards right.
 10. **Use cases** (`surface-200`): four link columns over a top rule.
-11. **Final CTA**: lime panel (radius xl), headline + line, Create merchant (night fill).
+11. **Final CTA**: lime panel (radius xl), headline + line, Become a merchant (night fill).
 12. **Footer** (`night`): logo + blurb, four link columns, legal line and disclosure.
 
 ## Responsive rules

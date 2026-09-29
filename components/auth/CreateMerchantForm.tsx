@@ -13,12 +13,7 @@ import { AuthShell } from "./AuthShell";
 import { OtpStep } from "./OtpStep";
 import { Notice, PasswordField, SelectField, Spinner, TextField, passwordScore } from "./fields";
 
-/**
- * Create merchant:
- * 1. POST /account/otp/send  { email, activity_type: "verify_email" }
- * 2. POST /account/otp/verify { otp, activity_id }
- * 3. POST /merchants          { business_name, country_id, email, password } -> signed in
- */
+
 export function CreateMerchantForm() {
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -84,7 +79,7 @@ export function CreateMerchantForm() {
   if (step === "otp") {
     return (
       <AuthShell title="Verify your email" sub="One last step before we create your merchant account.">
-        <OtpStep email={email} verifying={verifying || creating} resending={sending} verifyLabel="Verify and create merchant" onVerify={handleVerify} onResend={handleResend} onBack={() => setStep("form")} />
+        <OtpStep email={email} verifying={verifying || creating} resending={sending} verifyLabel="Verify and become a merchant" onVerify={handleVerify} onResend={handleResend} onBack={() => setStep("form")} />
       </AuthShell>
     );
   }
@@ -116,7 +111,7 @@ export function CreateMerchantForm() {
           <span>I agree to the CryptoFlow Terms of Service and Privacy Policy, and confirm I am authorised to open an account for this business.</span>
         </label>
         <Button type="submit" size="lg" block disabled={!canSubmit}>
-          {sending ? <><Spinner />Sending code</> : "Create merchant"}
+          {sending ? <><Spinner />Sending code</> : "Become a merchant"}
         </Button>
         {password && !strongEnough ? <p className="text-center text-[13px] text-ink-muted">Use 8+ characters with a mix of capitals, numbers or symbols.</p> : null}
       </form>

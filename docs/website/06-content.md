@@ -15,7 +15,7 @@ All homepage copy is in `lib/content.ts`.
 | Supported assets and networks | `assets`, `features[5]` | Product |
 | Logo | `components/site/Logo.tsx` | Brand |
 | Token icons | `components/ui/AssetPill.tsx` | Brand |
-| Routes for Log in and Create merchant (both live, wired to the API) | `nav` | Engineering |
+| Routes for Log in and Become a merchant (both live, wired to the API) | `nav` | Engineering |
 
 ## What each inner page needs
 

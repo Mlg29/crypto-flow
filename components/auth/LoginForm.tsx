@@ -99,7 +99,7 @@ export function LoginForm() {
   return (
     <AuthShell
       title="Welcome back"
-      sub={<>New to CryptoFlow? <Link href="/create-merchant" className="font-semibold text-brand hover:underline">Create merchant</Link></>}
+      sub={<>New to CryptoFlow? <Link href="/create-merchant" className="font-semibold text-brand hover:underline">Become a merchant</Link></>}
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <TextField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@business.com" autoComplete="email" required />

@@ -13,7 +13,7 @@ export const nav = {
     { label: "Use cases", href: "/use-cases" },
   ],
   login: { label: "Log in", href: "/login" },
-  create: { label: "Create merchant", href: "/create-merchant" },
+  create: { label: "Become a merchant", href: "/create-merchant" },
 };
 
 export const hero = {

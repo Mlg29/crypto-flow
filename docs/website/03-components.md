@@ -12,7 +12,7 @@ All live in `components/ui` and `components/sections`. They match the CryptoFlow
 | `block` | boolean | false | Full width |
 | `href` | string | | Renders a Next `Link`; otherwise a `<button type="button">` |
 
-States: hover (fill darkens or lightens), active (scale 0.98), focus-visible (2px focus ring), disabled (45% opacity). Copy: verb first, sentence case ("Create merchant", "Log in").
+States: hover (fill darkens or lightens), active (scale 0.98), focus-visible (2px focus ring), disabled (45% opacity). Copy: verb first, sentence case ("Become a merchant", "Log in").
 
 ## Badge (`components/ui/Badge.tsx`)
 
